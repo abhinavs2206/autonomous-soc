@@ -1,5 +1,7 @@
 # Secrets — never commit
 .env
+*.pub
+pair.txt
 
 # Generated data
 data/*.jsonl
