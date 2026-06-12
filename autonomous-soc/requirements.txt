@@ -1,8 +1,0 @@
-nvidia-ai-endpoints
-langchain
-langchain-nvidia-ai-endpoints
-fastapi
-uvicorn
-requests
-python-dotenv
-sse-starlette
