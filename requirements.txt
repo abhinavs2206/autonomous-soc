@@ -1,8 +1,15 @@
-nvidia-ai-endpoints
+# LLM layer -- real NVIDIA NIM (NVIDIA_API_KEY required, set in .env)
 langchain
 langchain-nvidia-ai-endpoints
+
+# Web / streaming
 fastapi
 uvicorn
 requests
 python-dotenv
-sse-starlette
+
+# CPU baseline for the GPU benchmark, and host transfer of cuDF results.
+pandas
+
+# NOTE: cuDF (GPU scoring) ships inside the NVIDIA Morpheus / RAPIDS container;
+# it is not pip-installable here. Run on the GPU box / inside that container.

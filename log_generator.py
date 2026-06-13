@@ -44,5 +44,34 @@ def generate(path="data/logs.jsonl"):
     print(f"Wrote {len(events)} events to {path}")
     return events
 
+
+def generate_scaled(n=1_000_000, path="data/logs_scaled.jsonl"):
+    """Bury the same 6-stage attack chain inside ~n benign noise events.
+
+    This is the scale demo: the GPU scorer reads the whole file and should flag
+    exactly the 6 chain events out of n+6. The noise is built from internal IPs
+    and benign ports so it stays below the anomaly threshold -- the needles are
+    the only things that light up. Nothing is faked: every row is scored for
+    real, the chain just genuinely scores higher than the haystack."""
+    t = datetime.utcnow()
+    # positions to drop the chain events into, spread across the whole stream
+    drops = {int((i + 1) * n / (len(ATTACK_CHAIN) + 1)): step
+             for i, step in enumerate(ATTACK_CHAIN)}
+    written = 0
+    with open(path, "w") as f:
+        for i in range(n + len(ATTACK_CHAIN)):
+            t += timedelta(milliseconds=random.randint(50, 400))
+            base = drops.get(i, random.choice(NOISE))
+            f.write(json.dumps(make_event(base, t)) + "\n")
+            written += 1
+    print(f"Wrote {written:,} events ({len(ATTACK_CHAIN)} attack-chain + "
+          f"{written - len(ATTACK_CHAIN):,} noise) to {path}")
+    return written
+
+
 if __name__ == "__main__":
-    generate()
+    import sys
+    if len(sys.argv) > 1:
+        generate_scaled(int(sys.argv[1]))
+    else:
+        generate()
